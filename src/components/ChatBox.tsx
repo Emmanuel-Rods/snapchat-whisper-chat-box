@@ -14,18 +14,76 @@ interface MessageData {
   timestamp: Date;
 }
 
-const ChatBox: React.FC = () => {
-  const [messages, setMessages] = useState<MessageData[]>([
+// This would typically come from an API or backend service
+const fetchChatHistory = async (): Promise<MessageData[]> => {
+  // Simulate API call with a delay
+  await new Promise(resolve => setTimeout(resolve, 300));
+  
+  // This would normally be fetched from your backend
+  return [
     {
       id: '1',
       text: "👋 Welcome to Snapbot!",
       isSender: false,
       timestamp: new Date()
     }
-  ]);
+  ];
+};
+
+// This would send a message to your backend and get a response
+const sendMessageToAPI = async (message: string): Promise<MessageData> => {
+  console.log("Sending message to API:", message);
+  
+  // Simulate API call with a delay
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  // This is where you would normally send the message to an AI service
+  // like OpenAI, Perplexity, or your own backend
+  
+  // For demo purposes, we'll return a simulated response
+  const responses = [
+    "That's interesting! Tell me more about it.",
+    "I understand. What else would you like to talk about?",
+    "Cool! Have you tried the new Snapchat features?",
+    "I see what you mean. How does that make you feel?",
+    "Thanks for sharing that with me!",
+    "I'm still learning, but that sounds fascinating!",
+  ];
+  
+  const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+  
+  return {
+    id: Date.now().toString(),
+    text: randomResponse,
+    isSender: false,
+    timestamp: new Date()
+  };
+};
+
+const ChatBox: React.FC = () => {
+  const [messages, setMessages] = useState<MessageData[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Load initial chat history on component mount
+  useEffect(() => {
+    const loadChatHistory = async () => {
+      setIsLoading(true);
+      try {
+        const history = await fetchChatHistory();
+        setMessages(history);
+      } catch (error) {
+        console.error("Failed to load chat history:", error);
+        toast("Failed to load chat history");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadChatHistory();
+  }, []);
   
   // Auto-scroll to the bottom when new messages are added
   useEffect(() => {
@@ -41,44 +99,41 @@ const ChatBox: React.FC = () => {
     }
   }, [darkMode]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (inputMessage.trim() === '') return;
     
-    const newMessage: MessageData = {
+    // Create the user message
+    const userMessage: MessageData = {
       id: Date.now().toString(),
       text: inputMessage,
       isSender: true,
       timestamp: new Date()
     };
     
-    setMessages(prev => [...prev, newMessage]);
+    // Add user message to state immediately
+    setMessages(prev => [...prev, userMessage]);
+    
+    // Clear input
     setInputMessage('');
     
-    // Add a fake reply after a short delay
-    setTimeout(() => {
-      const replies = [
-        "That's awesome! 😁",
-        "Tell me more!",
-        "Cool! What else is new?",
-        "Interesting, I'd love to hear more about that!",
-        "Nice! Have you tried the new Snapchat filters?",
-        "Haha, that's funny! 😂"
-      ];
+    // Set loading state
+    setIsLoading(true);
+    
+    try {
+      // Send message to API and get response
+      const botResponse = await sendMessageToAPI(inputMessage);
       
-      const randomReply = replies[Math.floor(Math.random() * replies.length)];
-      
-      const replyMessage: MessageData = {
-        id: Date.now().toString(),
-        text: randomReply,
-        isSender: false,
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, replyMessage]);
+      // Add bot response to messages
+      setMessages(prev => [...prev, botResponse]);
       
       // Show a notification
       toast("New message received!");
-    }, 1000);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast("Failed to get response");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -122,18 +177,24 @@ const ChatBox: React.FC = () => {
       
       {/* Chat Area */}
       <div className={`flex-1 p-4 overflow-y-auto ${darkMode ? "bg-snapchat-dark" : "bg-white"}`}>
-        <div className="flex flex-col">
-          {messages.map((message) => (
-            <Message
-              key={message.id}
-              text={message.text}
-              isSender={message.isSender}
-              timestamp={message.timestamp}
-              darkMode={darkMode}
-            />
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
+        {isLoading && messages.length === 0 ? (
+          <div className="flex justify-center items-center h-full">
+            <div className="animate-pulse text-gray-400">Loading messages...</div>
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            {messages.map((message) => (
+              <Message
+                key={message.id}
+                text={message.text}
+                isSender={message.isSender}
+                timestamp={message.timestamp}
+                darkMode={darkMode}
+              />
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
       </div>
       
       {/* Message Input */}
@@ -147,10 +208,12 @@ const ChatBox: React.FC = () => {
             ${darkMode 
               ? "bg-snapchat-dark text-white placeholder:text-gray-400" 
               : "bg-white text-snapchat-black"}`}
+          disabled={isLoading}
         />
         <Button 
           onClick={handleSendMessage}
           className="rounded-full h-12 w-12 p-0 bg-snapchat-yellow hover:bg-snapchat-yellow/90"
+          disabled={isLoading || inputMessage.trim() === ''}
         >
           <Send size={20} className="text-snapchat-black" />
         </Button>
