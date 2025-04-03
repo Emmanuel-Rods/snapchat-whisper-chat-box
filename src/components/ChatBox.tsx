@@ -3,8 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Message from './Message';
-import { Send } from 'lucide-react';
+import { Send, Moon, Sun } from 'lucide-react';
 import { toast } from 'sonner';
+import { Switch } from "@/components/ui/switch";
 
 interface MessageData {
   id: string;
@@ -17,18 +18,28 @@ const ChatBox: React.FC = () => {
   const [messages, setMessages] = useState<MessageData[]>([
     {
       id: '1',
-      text: "👋 Welcome to Snapchat Messenger!",
+      text: "👋 Welcome to Snapbot!",
       isSender: false,
       timestamp: new Date()
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Auto-scroll to the bottom when new messages are added
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Apply dark mode class to html element
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
@@ -76,20 +87,41 @@ const ChatBox: React.FC = () => {
     }
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    toast(`${darkMode ? "Light" : "Dark"} mode activated!`);
+  };
+
   return (
-    <div className="flex flex-col h-[80vh] w-[90%] max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden border border-snapchat-gray">
+    <div className={`flex flex-col h-[80vh] w-[90%] max-w-3xl rounded-xl shadow-lg overflow-hidden border 
+      ${darkMode 
+        ? "bg-snapchat-dark border-snapchat-black text-white" 
+        : "bg-white border-snapchat-gray text-snapchat-black"}`}>
       {/* Header */}
-      <div className="bg-snapchat-yellow p-4 flex items-center justify-between">
+      <div className={`${darkMode ? "bg-snapchat-black" : "bg-snapchat-yellow"} p-4 flex items-center justify-between`}>
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-snapchat-yellow font-bold text-lg">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg 
+            ${darkMode 
+              ? "bg-snapchat-dark text-snapchat-yellow" 
+              : "bg-white text-snapchat-yellow"}`}>
             S
           </div>
-          <span className="ml-3 font-bold text-snapchat-black text-xl">Snapchat Chat</span>
+          <span className={`ml-3 font-bold text-xl ${darkMode ? "text-white" : "text-snapchat-black"}`}>
+            Snapbot
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          {darkMode ? <Moon size={18} /> : <Sun size={18} />}
+          <Switch 
+            checked={darkMode} 
+            onCheckedChange={toggleDarkMode}
+            className={darkMode ? "bg-snapchat-blue" : "bg-snapchat-gray"}
+          />
         </div>
       </div>
       
       {/* Chat Area */}
-      <div className="flex-1 p-4 overflow-y-auto bg-white">
+      <div className={`flex-1 p-4 overflow-y-auto ${darkMode ? "bg-snapchat-dark" : "bg-white"}`}>
         <div className="flex flex-col">
           {messages.map((message) => (
             <Message
@@ -97,6 +129,7 @@ const ChatBox: React.FC = () => {
               text={message.text}
               isSender={message.isSender}
               timestamp={message.timestamp}
+              darkMode={darkMode}
             />
           ))}
           <div ref={messagesEndRef} />
@@ -104,13 +137,16 @@ const ChatBox: React.FC = () => {
       </div>
       
       {/* Message Input */}
-      <div className="bg-snapchat-gray p-4 flex items-center gap-3">
+      <div className={`p-4 flex items-center gap-3 ${darkMode ? "bg-snapchat-black" : "bg-snapchat-gray"}`}>
         <Input
           placeholder="Message..."
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="flex-1 rounded-full bg-white border-0 focus-visible:ring-1 focus-visible:ring-snapchat-blue py-6 px-4 text-lg"
+          className={`flex-1 rounded-full border-0 focus-visible:ring-1 focus-visible:ring-snapchat-blue py-6 px-4 text-lg
+            ${darkMode 
+              ? "bg-snapchat-dark text-white placeholder:text-gray-400" 
+              : "bg-white text-snapchat-black"}`}
         />
         <Button 
           onClick={handleSendMessage}
