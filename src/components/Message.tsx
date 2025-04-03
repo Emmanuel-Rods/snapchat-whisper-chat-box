@@ -23,12 +23,12 @@ const Message: React.FC<MessageProps> = ({ text, isSender, timestamp, darkMode =
           isSender 
             ? "bg-snapchat-blue text-white rounded-br-sm" 
             : darkMode 
-              ? "bg-gray-800 text-white rounded-bl-sm"
+              ? "bg-[#444444] text-[#E8E8E8] rounded-bl-sm"
               : "bg-snapchat-gray text-snapchat-dark rounded-bl-sm"
         )}
       >
         <p className="text-sm break-words">{text}</p>
-        <p className={`text-[10px] mt-1 ${darkMode && !isSender ? "opacity-50" : "opacity-70"}`}>
+        <p className={`text-[10px] mt-1 ${darkMode && !isSender ? "text-[#AAADB0]" : "opacity-70"}`}>
           {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>

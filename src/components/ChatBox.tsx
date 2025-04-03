@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -150,23 +149,23 @@ const ChatBox: React.FC = () => {
   return (
     <div className={`flex flex-col h-[80vh] w-[90%] max-w-3xl rounded-xl shadow-lg overflow-hidden border 
       ${darkMode 
-        ? "bg-snapchat-dark border-snapchat-black text-white" 
+        ? "bg-[#2A2A2A] border-[#444444] text-[#E8E8E8]" 
         : "bg-white border-snapchat-gray text-snapchat-black"}`}>
       {/* Header */}
-      <div className={`${darkMode ? "bg-snapchat-black" : "bg-snapchat-yellow"} p-4 flex items-center justify-between`}>
+      <div className={`${darkMode ? "bg-[#333333]" : "bg-snapchat-yellow"} p-4 flex items-center justify-between`}>
         <div className="flex items-center">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg 
             ${darkMode 
-              ? "bg-snapchat-dark text-snapchat-yellow" 
+              ? "bg-[#444444] text-snapchat-yellow" 
               : "bg-white text-snapchat-yellow"}`}>
             S
           </div>
-          <span className={`ml-3 font-bold text-xl ${darkMode ? "text-white" : "text-snapchat-black"}`}>
+          <span className={`ml-3 font-bold text-xl ${darkMode ? "text-[#E8E8E8]" : "text-snapchat-black"}`}>
             Snapbot
           </span>
         </div>
         <div className="flex items-center gap-2">
-          {darkMode ? <Moon size={18} /> : <Sun size={18} />}
+          {darkMode ? <Moon size={18} className="text-[#E8E8E8]" /> : <Sun size={18} />}
           <Switch 
             checked={darkMode} 
             onCheckedChange={toggleDarkMode}
@@ -176,7 +175,7 @@ const ChatBox: React.FC = () => {
       </div>
       
       {/* Chat Area */}
-      <div className={`flex-1 p-4 overflow-y-auto ${darkMode ? "bg-snapchat-dark" : "bg-white"}`}>
+      <div className={`flex-1 p-4 overflow-y-auto ${darkMode ? "bg-[#2A2A2A]" : "bg-white"}`}>
         {isLoading && messages.length === 0 ? (
           <div className="flex justify-center items-center h-full">
             <div className="animate-pulse text-gray-400">Loading messages...</div>
@@ -198,7 +197,7 @@ const ChatBox: React.FC = () => {
       </div>
       
       {/* Message Input */}
-      <div className={`p-4 flex items-center gap-3 ${darkMode ? "bg-snapchat-black" : "bg-snapchat-gray"}`}>
+      <div className={`p-4 flex items-center gap-3 ${darkMode ? "bg-[#333333]" : "bg-snapchat-gray"}`}>
         <Input
           placeholder="Message..."
           value={inputMessage}
@@ -206,7 +205,7 @@ const ChatBox: React.FC = () => {
           onKeyDown={handleKeyDown}
           className={`flex-1 rounded-full border-0 focus-visible:ring-1 focus-visible:ring-snapchat-blue py-6 px-4 text-lg
             ${darkMode 
-              ? "bg-snapchat-dark text-white placeholder:text-gray-400" 
+              ? "bg-[#444444] text-[#E8E8E8] placeholder:text-[#8A898C]" 
               : "bg-white text-snapchat-black"}`}
           disabled={isLoading}
         />
