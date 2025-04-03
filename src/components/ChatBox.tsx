@@ -77,20 +77,19 @@ const ChatBox: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[600px] max-w-md w-full bg-white rounded-xl shadow-lg overflow-hidden border border-snapchat-gray">
+    <div className="flex flex-col h-[80vh] w-[90%] max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden border border-snapchat-gray">
       {/* Header */}
-      <div className="bg-snapchat-yellow p-3 flex items-center justify-between">
+      <div className="bg-snapchat-yellow p-4 flex items-center justify-between">
         <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-snapchat-yellow font-bold">
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-snapchat-yellow font-bold text-lg">
             S
           </div>
-          <span className="ml-2 font-bold text-snapchat-black">Snapchat Chat</span>
+          <span className="ml-3 font-bold text-snapchat-black text-xl">Snapchat Chat</span>
         </div>
-        <div className="text-xs text-snapchat-dark">Tap to view</div>
       </div>
       
       {/* Chat Area */}
-      <div className="flex-1 p-3 overflow-y-auto bg-white">
+      <div className="flex-1 p-4 overflow-y-auto bg-white">
         <div className="flex flex-col">
           {messages.map((message) => (
             <Message
@@ -105,19 +104,19 @@ const ChatBox: React.FC = () => {
       </div>
       
       {/* Message Input */}
-      <div className="bg-snapchat-gray p-3 flex items-center gap-2">
+      <div className="bg-snapchat-gray p-4 flex items-center gap-3">
         <Input
           placeholder="Message..."
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="flex-1 rounded-full bg-white border-0 focus-visible:ring-1 focus-visible:ring-snapchat-blue"
+          className="flex-1 rounded-full bg-white border-0 focus-visible:ring-1 focus-visible:ring-snapchat-blue py-6 px-4 text-lg"
         />
         <Button 
           onClick={handleSendMessage}
-          className="rounded-full h-10 w-10 p-0 bg-snapchat-yellow hover:bg-snapchat-yellow/90"
+          className="rounded-full h-12 w-12 p-0 bg-snapchat-yellow hover:bg-snapchat-yellow/90"
         >
-          <Send size={18} className="text-snapchat-black" />
+          <Send size={20} className="text-snapchat-black" />
         </Button>
       </div>
     </div>
